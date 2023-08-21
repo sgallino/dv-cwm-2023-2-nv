@@ -1,0 +1,132 @@
+# Firestore
+Es un servicio de base de datos NoSQL (Not only SQL), con un alto enfoque en funcionalidades de tiempo real.
+
+¿Qué significa "base de datos NoSQL"?
+Significa que no sigue el "modelo relacional" que siguen las bases SQL.
+En general, son bases que se enfocan en las siguientes cosas:
+- Schemaless: No tener un schema. El "schema" en una base SQL hace referencia a toda su estructura: tablas,
+    campos, relaciones, etc. Las bases NoSQL no tienen tal cosa. Los datos se pueden grabar con cualquier
+    forma en cualquier momento.
+- Rápidas para escritura y lectura secuencial: Al no tener un schema, no necesitan hacer todas las
+    verificaciones que el mismo implica. Esto suele traducirse en una mucho mayor velocidad de escritura y
+    lectura secuencial.
+- Tienen muchos más límites a la hora de relacionar información: Como no tienen un schema, no tienen todo
+    el conocimiento extra sobre nuestra información, ni tampoco toda la solidez de los datos que implica
+    la existencia del mismo. Por lo tanto, suelen tener funcionalidades mucho más reducidas para la
+    relación de información comparadas con SQL.
+
+Como podemos observar, tienen pros y contras con respecto a las bases SQL.
+Es debido a eso que no es para nada extraño encontrarse con proyectos que utilicen 2 o más bases de datos
+diferentes.
+Por ejemplo, podríamos tener un proyecto que use:
+a. MySQL/MariaDB/PostgreSQL: Para manejar todos los datos más importantes de la aplicación, con el fin de
+    poder obtener estadísticas, y un mejor análisis de la info.
+b. Firestore/MongoDB: Para manejar todas las interacciones que requieren más flexibilidad (como preferencias
+    de usuario) o mayor velocidad (como acciones en tiempo real, chats, sistemas de notificaciones,
+    ubicaciones en un mapa, etc).
+c. Redis: Para manejar cachés y datos temporales.
+
+En nuestro caso, solo vamos a trabajar con Firestore.
+
+
+## Estructura de archivos de Firestore
+En Firestore, la unidad de almacenamiento de información se llama "document" o "documento".
+Podemos pensar en un documento como en un objeto JSON (no es exactamente igual, pero es parecido).
+Esto significa que cada dato que queramos guardar en el documento debe asociarse a una clave.
+
+Por ejemplo, un documento sobre una entrada de un blog, podría ser algo así (el [D] lo agrego para indicar
+documento):
+
+[D] {
+    titulo: 'Aprendiendo Firestore'
+    categoria: 'Desarrollo Web'
+    texto: 'Lorem ipsum dolor sit amet...'
+    autor: 'Santiago Gallino'
+}
+
+Los documentos no pueden existir sueltos. Deben siempre estar contenidos en una "collection" o "colección".
+Las colecciones no son más que contenedor de documentos, que llevan un nombre, y que asignan un id a cada
+documento en su interior.
+Por ejemplo, podríamos tener una colección para entradas de blog (el [C] lo agrego para indicar colección):
+
+[C] blogs {
+    [D] id1: {
+        titulo: 'Aprendiendo Firestore'
+        categoria: 'Desarrollo Web'
+        texto: 'Lorem ipsum dolor sit amet...'
+        autor: 'Santiago Gallino'
+    }
+
+    [D] id2: {
+        titulo: 'Introducción a JavaScript'
+        categoria: 'Desarrollo Web'
+        texto: 'Lorem ipsum dolor sit amet...'
+        autor: 'Federico Noto'
+    }
+
+    ...
+}
+
+Cabe destacar que cada documento es independiente de los otros, y no tienen por qué tener los mismos campos.
+Aunque es una buena idea que en general los campos coincidan, ya que trabajar con una colección de documentos
+todos arbitrarios no es algo necesariamente agradable o práctico.
+
+Una colección, dijimos, solo puede contener documentos. Y un documento solo puede existir en una colección.
+En ocasiones, sin embargo, vamos a necesitar jerarquizar datos, es decir, tener datos que dependan de otros.
+Por ejemplo, supongamos que queremos guardar los comentarios de cada entrada de blog.
+Una alternativa para hacer esto podría ser guardar una 'subcollection' o 'subcolección' en cada documento.
+Los documentos, además de sus datos, pueden incluir subcolecciones, que a su vez contendrán sus propios
+documentos.
+
+Podría verse así:
+
+[C] blogs {
+    [D] id1: {
+        titulo: 'Aprendiendo Firestore'
+        categoria: 'Desarrollo Web'
+        texto: 'Lorem ipsum dolor sit amet...'
+        autor: 'Santiago Gallino'
+
+        [C] comentarios: {
+            [D] comid1: {
+                usuario: 'Saraza',
+                mensaje: 'Hola mundo!'
+            }
+
+            [D] comid2: {
+                usuario: 'Pepe Trueno'
+                mensaje: 'Que comentario útil, Saraza, gracias.'
+            }
+
+            ...
+        }
+    }
+
+    [D] id2: {
+        titulo: 'Introducción a JavaScript'
+        categoria: 'Desarrollo Web'
+        texto: 'Lorem ipsum dolor sit amet...'
+        autor: 'Federico Noto'
+
+        [C] comentarios: {
+            [D] comid3: {
+                usuario: 'Saraza',
+                mensaje: 'Hola mundo!'
+            }
+
+            [D] comid4: {
+                usuario: 'Pepe Trueno'
+                mensaje: '¿Podés poner algo que no sea "Hola mundo!"?'
+            }
+
+            ...
+        }
+    }
+
+    ...
+}
+
+
+## Usando Firestore con JS
+Lo primero es contar con un proyecto de Firebase ya creado.
+

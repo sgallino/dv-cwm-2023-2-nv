@@ -1,0 +1,29 @@
+Santiago Gallino
+Emails:
+santiago.gallino@davinci.edu.ar
+gallino.santi@gmail.com
+
+# Clientes Web Mobile
+Esta materia tiene 2 objetivos:
+1. Dictar contenido: Plataforma Firebase, y algunas herramientas de frontend (ej: Vite, Tailwind, Vue
+    "avanzado").
+2. Servir de apoyo a la materia de Proyecto Final.
+
+
+## Entregas
+2 TPs:
+1er TP - Desarrollar un sitio que ofrezca alguna funcionalidad o servicio, cuyos datos provengan de Firebase.
+Debe incluir además un registro y autenticación de usuarios.
+2do TP - Hay 2 opciones:
+a. Extensión del primer TP. Agregando algunas nuevas funcionalidades.
+b. Si están cursando proyecto final, van a poder presentar como entrega el desarrollo que tengan para esa materia.
+
+3ra nota: Promedio de los dos TPs.
+
+Esta materia es promocionable si ambos TPs son aprobados con 7 o más. El promedio de esas queda como nota
+final.
+
+Final:
+Al igual que el 2do TP, hay 2 opciones:
+a. Extensión del 2do TP.
+b. Avance del proyecto presentado para la materia de Proyecto Final.

@@ -1,0 +1,17 @@
+# Firebase
+https://firebase.google.com/
+
+Firebase es una plataforma "serverless" que ofrece múltiples servicios para el desarrollo de aplicaciones.
+
+Nota: "Serverless" no significa, literalmente, "sin servidor" (pese a que esa es la traducción), sino que
+significa que nosotros, como desarrolladores, no necesitamos preocuparnos por un servidor. El mismo se
+maneja automáticamente por el servicio.
+
+Entre los muchos servicios que ofrece, vamos a destacar los siguientes:
+- Firestore: Servicio de base de datos NoSQL con un fuerte énfasis en la funcionalidad en tiempo real.
+- Authentication: Servicio de autenticación.
+- Storage: Servicio de almacenamiento de archivos.
+
+Ofrece, además, integración con otros servicios de la GCP (Google Cloud Platform).
+
+Para usar esta plataforma, solo es necesario contar con una cuenta de Google (la cuenta de Da Vinci sirve).

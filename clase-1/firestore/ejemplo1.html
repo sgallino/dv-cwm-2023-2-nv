@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <title>Intro a Firestore</title>
+</head>
+<body>
+    <h1>Intro a Firestore</h1>
+
+    <p>Leyendo los mensajes del chat</p>
+
+    <div id="salida"></div>
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-firestore.js"
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD0Bvj6apWImFckIZxucCIujzqt1_LNvfc",
+            authDomain: "cwm-2023-2-noche-v.firebaseapp.com",
+            projectId: "cwm-2023-2-noche-v",
+            storageBucket: "cwm-2023-2-noche-v.appspot.com",
+            messagingSenderId: "1062627041819",
+            appId: "1:1062627041819:web:04c68f22156df9f609cebe"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+
+        // Obtener la instancia de Firestore.
+        const db = getFirestore(app);
+
+        /*
+         |--------------------------------------------------------------------------
+         | Leyendo datos de Firestore
+         |--------------------------------------------------------------------------
+         | Si queremos traer para ver los contenidos de cualquier elemento de Firestore, ya sea un documento
+         | o una colección, lo primero que tenemos que obtener es una "referencia" a dicho elemento.
+         | Para leer todos los documentos de la colección "chats", creamos la referencia a la colección
+         | usando la función "collection" del SDK (Standard Development Kit) de Firestore.
+         | Esta función recibe 2 parámetros:
+         | 1. La referencia de la base de datos.
+         | 2. Un string con el "path" de la collection en cuestión.
+         |
+         | Una vez que tenemos la referencia, el siguiente paso es leer con ayuda de alguna función como
+         | getDocs().
+         | Esta función recibe como argumento una collection o un query (más adelante vamos a hablar de
+         | queries), y retorna una promesa que se resuelve con un "snapshot" de todos los documentos
+         | obtenidos.
+         |
+         | Los snapshots (o "fotografías instantáneas") son objetos que contienen la info de la colección o
+         | query que hayamos pedido, tal cual estaban en el momento de completarse la lectura.
+         | Para obtener los resultados de una manera manejable tenemos 2 opciones:
+         | 1. Usar el método forEach().
+         | 2. Obtener el array de objetos usando la propiedad "docs".
+         */
+        const refChat = collection(db, 'chats');
+
+        const salida = document.getElementById('salida');
+
+        getDocs(refChat)
+            .then(snapshot => {
+                // console.log("Snapshot: ", snapshot);
+                // Probamos con el forEach.
+                // salida.innerHTML = "";
+                // snapshot.forEach(doc => {
+                //     // console.log("Documento: ", doc);
+                //     // Para pedir los datos de un documento, usamos .data(), y para su id, usamos .id
+                //     // console.log("El documento ", doc.id, " tiene los datos ", doc.data());
+                //     salida.innerHTML += `<div>
+                //         <div><b>Usuario: </b> ${doc.data().user}</div>
+                //         <div><b>Dijo: </b> ${doc.data().message}</div>
+                //     </div>`;
+                // });
+
+                // Versión usando docs, más estilo "funcional".
+                // Para pedir los datos de un documento, usamos .data(), y para su id, usamos .id
+                salida.innerHTML = snapshot.docs.map(doc => `<div>
+                    <div><b>Usuario: </b> ${doc.data().user}</div>
+                    <div><b>Dijo: </b> ${doc.data().message}</div>
+                </div>`).join('');
+            });
+    </script>
+</body>
+</html>
