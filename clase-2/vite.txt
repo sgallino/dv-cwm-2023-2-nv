@@ -1,0 +1,61 @@
+# Vite
+¿Qué es Vite?
+Vite es una herramienta de "buildeo" (build tool) de frontend de última generación, similar a Webpack pero
+mucho más moderno.
+
+Incluye grandes beneficios por sobre alternativas como webpack, como por ejemplo:
+- Uso nativo de módulos de ECMAScript (ESM), lo que permite grandes optimizaciones de performance en los
+navegadores, así como mayor comodidad para el desarrollo.
+- Incluye soporte "out-of-the-box" para muchas tecnologías y prácticas modernas, como TypeScript, soporte
+de CSS en JS, imágenes en JS, etc.
+- Es infinitamente más simple de configurar que webpack.
+
+¿Por qué queremos usar una herramienta de buildeo?
+Hoy en día, el desarrollo de aplicaciones complejas de frontend es algo extremadamente complicado.
+Si bien en muchas áreas se avanzó mucho para simplificarlo (como por ejemplo, en estándares web), la realidad
+hace que sea mucho más rápido lo que se complejiza el ecosistema que lo que se puede simplificar.
+
+Un proyecto hoy en día puede necesitar de muchas cosas:
+- Querer utilizar JS de última generación, que no esté disponible aún en browsers.
+- Querer optimizar el tamaño del código JS que enviamos al cliente. Las aplicaciones de front pueden pesar
+varios KBs o incluso MBs de JS. Optimizar para que pesen lo menos posible se vuelve fundamental, así como
+también poder tratar de "fragmentar" los pedazos ("chunks") de código a enviar, para no tener que mandarlo
+entero de una sola vez a todo el código.
+- Optimizar assets (recursos), como transformar imágenes de un formato a otro.
+- Usar herramientas de desarrollo como TypeScript o Tailwind. Las cuales necesitan sí o sí procesar los
+archivos para generar otros que puedan ser utilizables por los browsers.
+- Etc.
+
+La idea de hacer cualquiera de esas cosas de manera manual es poco simpática, ni hablar de tener que hacer
+todas esas cosas.
+
+Ahí es donde entran los sistemas de buildeo de frontend como webpack o Vite.
+Nos permiten automatizar todas esas tareas para generarnos una experiencia de desarrollo mucho más agradable.
+Incluyendo cosas como:
+- Todo lo mencionado previamente.
+- Servidor de desarrollo. El cual permite trabajar con todas las cosas mencionadas, al mismo tiempo que lo
+podemos probar en el browser. Evitando tener que compilar el código entero cada vez que hagamos un cambio.
+- Generar los archivos finales para su distribución. Que serían los que subimos a un hosting.
+
+
+## Usando Vite
+https://vitejs.dev/guide/
+
+Creamos el proyecto usando el comando
+
+    npm create vite@latest
+
+Seguimos las preguntas que nos hizo para su configuración.
+Entramos a la carpeta del proyecto creada.
+E instalamos los módulos de npm usando:
+
+    npm install
+
+Finalmente, corrimos el servidor usando el comando:
+
+    npm run dev
+
+
+## Estructura de archivos de Vite
+Por defecto (esto es configurable), el archivo de inicio de Vite siempre va a ser el [index.html] en la raíz
+del proyecto. Salvo que lo cambien en la configuración, no deben cambiar de ubicación este archivo.
