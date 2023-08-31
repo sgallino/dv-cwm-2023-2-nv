@@ -1,0 +1,66 @@
+# Tailwind
+https://tailwindcss.com/
+
+Tailwind es un framework de CSS de utilidades.
+Estas utilidades, básicamente, son clases que se mapean a un estilo cada una.
+Por ejemplo, una clase para poner un "margin-top: 1rem;" es "mt-4".
+
+Es similar la idea a usar el atributo style, donde ponemos los estilos directamente en las etiquetas de 
+HTML.
+
+Hay algunas importantes diferencias, sin embargo, entre usar style y usar Tailwind. Por ejemplo:
+- Tailwind permite acceder con las clases a cosas que con style no podemos, como pseudo-elementos, 
+pseudo-clases, breakpoints de media queries, etc.
+- Sigue siendo CSS externo, porque es Tailwind el que lo genera. Esto implica que es mucho más simple 
+extender el framework de una manera homogénea para todo el sitio.
+
+Además, Tailwind puede ofrecer optimizaciones para el peso de descarga del CSS, y se combina muy bien con
+componentes de frameworks como Vue/React.
+
+
+## Agregando Tailwind a Vite
+https://tailwindcss.com/docs/guides/vite
+
+1. Instalamos tailwindcss y autoprefixer como dependencias de desarrollo del proyecto.
+
+    npm i -D tailwindcss autoprefixer
+
+2. Publicamos el archivo de configuración de Tailwind.
+
+    npx tailwindcss init -p
+
+3. Agregamos en la configuración de Tailwind los archivos que debe procesar. En el [tailwind.config.js]
+ escribimos:
+
+    /** @type {import('tailwindcss').Config} */
+    export default {
+        content: [
+            "./index.html",
+            "./src/**/*.{js,ts,jsx,tsx}",
+        ],
+        theme: {
+            extend: {},
+        },
+        plugins: [],
+    }
+
+Nota: Esto supone que van a trabajar con los archivos en la carpeta 'src'.
+
+4. Creamos, si no tenemos uno, un archivo de "arranque" de CSS que incluya las directivas de Tailwind.
+    
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+
+5. Incluimos ese archivo de CSS al archivo de arranque de nuestro proyecto de JS (en mi caso, el [main.js]).
+
+    import './src/main.css';
+
+6. ???
+
+7. Profit.
+
+
+## Usando Tailwind
+Si hicimos todo bien, deberíamos poder arrancar el proyecto y ver que todos los estilos básicos de una
+web se fueron. Es decir, Tailwind por defecto elimina todos los márgenes, paddings, etc, entre otras cosas.
