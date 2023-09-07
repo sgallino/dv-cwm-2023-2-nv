@@ -1,22 +1,31 @@
 <script>
 import {chatSubscribeToMessages, chatSaveMessage} from "../services/chat.js";
-
-// TODO: Ordenar los mensajes del chat :)
+import { dateToString } from '../helpers/date.js';
+import BaseButton from "../components/BaseButton.vue";
+import BaseLabel from "../components/BaseLabel.vue";
+import BaseInput from "../components/BaseInput.vue";
+import BaseTextarea from "../components/BaseTextarea.vue";
+import Loader from "../components/Loader.vue";
 
 export default {
     name: "Chat",
+    components: { BaseButton, BaseLabel, BaseInput, BaseTextarea, Loader },
     data() {
         return {
+            messagesLoading: true,
             messages: [],
+            newMessageSaving: false,
             newMessage: {
                 user: '',
                 message: '',
             }
-        }
+        };
     },
-
     methods: {
         sendMessage() {
+            if(this.newMessageSaving) return;
+
+            this.newMessageSaving = true;
             chatSaveMessage({
                 user: this.newMessage.user,
                 message: this.newMessage.message,
@@ -24,15 +33,21 @@ export default {
             })
                 .then(() => {
                     this.newMessage.message = '';
+                    this.newMessageSaving = false;
                 });
+        },
+
+        formatDate(date) {
+            return dateToString(date);
         }
     },
-
     mounted() {
+        this.messagesLoading = true;
         chatSubscribeToMessages(messages => {
             this.messages = messages;
+            this.messagesLoading = false;
         });
-    }
+    },
 };
 </script>
 
@@ -42,14 +57,21 @@ export default {
     <p class="mb-3">Leyendo los mensajes del chat, ahora en tiempo real</p>
 
     <div class="flex justify-between gap-4">
-        <div >
-            <div 
-                v-for="message in messages"
-                class="mb-2"
-            >
-                <div><b>Usuario:</b> {{ message.user }}</div>
-                <div><b>Mensaje:</b> {{ message.message }}</div>
-            </div>
+        <div>
+            <template v-if="!messagesLoading">
+                <div 
+                    v-for="message in messages"
+                    :key="message.id"
+                    class="mb-2"
+                >
+                    <div><b>Usuario:</b> {{ message.user }}</div>
+                    <div><b>Mensaje:</b> {{ message.message }}</div>
+                    <div class="text-right">{{ formatDate(message.created_at) }}</div>
+                </div>
+            </template>
+            <template v-else>
+                <Loader />
+            </template>
         </div>
 
         <form
@@ -57,26 +79,27 @@ export default {
             @submit.prevent="sendMessage"
         >
             <div class="mb-3">
-                <label for="user" class="block mb-1 font-bold">Usuario</label>
-                <input
-                    class="w-full px-1.5 py-1 border border-gray-400 rounded"
+                <BaseLabel for="user">Usuario</BaseLabel>
+                <BaseInput
                     type="text"
                     id="user"
                     v-model="newMessage.user"
-                >
+                />
             </div>
             <div class="mb-3">
-                <label for="message" class="block mb-1 font-bold">Mensaje</label>
-                <textarea
-                    class="w-full px-1.5 py-1 border border-gray-400 rounded"
+                <BaseLabel for="message">Mensaje</BaseLabel>
+                <BaseTextarea
                     id="message"
                     v-model="newMessage.message"
-                ></textarea>
+                ></BaseTextarea>
             </div>
-            <button 
+            <BaseButton
+                :loading="newMessageSaving"
+            />
+            <!-- <button 
                 class="w-full p-1.5 rounded bg-blue-700 text-white"
                 type="submit"
-            >Enviar</button>
+            >Enviar</button> -->
         </form>
     </div>
 </template>
