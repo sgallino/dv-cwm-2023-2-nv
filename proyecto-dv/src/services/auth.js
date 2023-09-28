@@ -18,7 +18,7 @@ El sujeto luego es el encargado de llevar una lista de los observadores, y de no
 algún cambio.
 El proceso de agregar un observador se suele llamar en algunos casos "listen" o "subscribe".
 */
-import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { auth } from './firebase.js';
 
 let userData = {
@@ -26,6 +26,24 @@ let userData = {
     email: null,
 }
 let observers = [];
+
+// Si el usuario figuraba como autenticado, lo marcamos como tal inmediatamente.
+if(localStorage.getItem('user')) {
+    userData = JSON.parse(localStorage.getItem('user'));
+}
+
+onAuthStateChanged(auth, user => {
+    if(user) {
+        setUserData({
+            id: user.uid,
+            email: user.email,
+        });
+        localStorage.setItem('user', JSON.stringify(userData));
+    } else {
+        clearUserData();
+        localStorage.removeItem('user');
+    }
+});
 
 /**
  * Inicia sesión.
@@ -63,10 +81,10 @@ export function login({email, password}) {
 
             // // Notificamos a todos los observadores.
             // notifyAll();
-            setUserData({
-                id: userCredentials.user.uid,
-                email: userCredentials.user.email,
-            });
+            // setUserData({
+            //     id: userCredentials.user.uid,
+            //     email: userCredentials.user.email,
+            // });
 
             return {...userData};
         })
@@ -83,14 +101,15 @@ export function login({email, password}) {
  * @returns {Promise}
  */
 export function logout() {
-    const promise = signOut(auth);
-    clearUserData();
+    // const promise = signOut(auth);
+    // clearUserData();
     // userData = {
     //     id: null,
     //     email: null,
     // }
     // notifyAll();
-    return promise;
+    // return promise;
+    return signOut(auth);
 }
 
 /**
@@ -98,13 +117,21 @@ export function logout() {
  * El observer debe ser una función que reciba como argumento un objeto y no retorne nada.
  * 
  * @param {({id: null|string, email: null|string}) => void} observer 
+ * @returns {() => void} Función para cancelar la suscripción.
  */
 export function subscribeToAuth(observer) {
     // Agregamos el observer a la lista.
     observers.push(observer);
 
+    // console.log("[auth.js subscribeToAuth] Observer agregado. El stack actual es: ", observers);
+
     // Ejecutamos el observer inmediatamente con la data actual.
     notify(observer);
+
+    return () => {
+        observers = observers.filter(obs => obs !== observer);
+        // console.log("[auth.js subscribeToAuth] Observer removido. El stack actual es: ", observers);
+    }
 }
 
 /**

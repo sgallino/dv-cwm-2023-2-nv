@@ -39,9 +39,6 @@ export default {
                 <li>
                     <router-link to="/quienes-somos">Quiénes Somos</router-link>
                 </li>
-                <li>
-                    <router-link to="/chat">Chat</router-link>
-                </li>
                 
                 <template v-if="user.id === null">
                     <li>
@@ -53,7 +50,10 @@ export default {
                 </template>
                 <template v-else>
                     <li>
-                        <router-link to="/registro">Mi Perfil</router-link>
+                        <router-link to="/chat">Chat</router-link>
+                    </li>
+                    <li>
+                        <router-link to="/perfil">Mi Perfil</router-link>
                     </li>
                     <li>
                         <form 
