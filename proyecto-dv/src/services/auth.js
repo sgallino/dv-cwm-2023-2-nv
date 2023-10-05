@@ -18,8 +18,9 @@ El sujeto luego es el encargado de llevar una lista de los observadores, y de no
 algún cambio.
 El proceso de agregar un observador se suele llamar en algunos casos "listen" o "subscribe".
 */
-import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { auth } from './firebase.js';
+import { createUserProfile } from './user.js';
 
 let userData = {
     id: null,
@@ -44,6 +45,30 @@ onAuthStateChanged(auth, user => {
         localStorage.removeItem('user');
     }
 });
+
+/**
+ * 
+ * @param {{email: string, password: string}} user
+ * @return {Promise}
+ */
+export async function register({email, password}) {
+    try {
+        const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
+
+        // Registramos al usuario también en Firestore.
+        createUserProfile(userCredentials.user.uid, {email});
+
+        return {
+            id: userCredentials.user.uid,
+            email: userCredentials.user.email,
+        }   
+    } catch (error) {
+        return {
+            code: error.code,
+            message: error.message,
+        }
+    }
+}
 
 /**
  * Inicia sesión.

@@ -2,13 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-.loader {
+.loader,
+.loader-mini {
     display: inline-block;
     width: 80px;
     height: 80px;
 }
 
-.loader:after {
+.loader:after,
+.loader-mini:after {
     content: " ";
     display: block;
     width: 64px;
@@ -16,6 +18,23 @@
     margin: 8px;
     border-radius: 50%;
     border: 6px solid #999;
+    border-color: #999 transparent #999 transparent;
+    animation: loader 1.2s linear infinite;
+}
+
+.loader-mini {
+    width: 48px;
+    height: 48px;
+}
+
+.loader-mini:after {
+    content: " ";
+    display: block;
+    width: 32px;
+    height: 32px;
+    margin: 8px;
+    border-radius: 50%;
+    border: 3px solid #999;
     border-color: #999 transparent #999 transparent;
     animation: loader 1.2s linear infinite;
 }

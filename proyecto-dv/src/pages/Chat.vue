@@ -33,6 +33,7 @@ export default {
 
             this.newMessageSaving = true;
             chatSaveMessage({
+                userId: this.user.id,
                 user: this.user.email,
                 message: this.newMessage.message,
                 // ...this.newMessage // Podríamos haberlo escrito así, también.
@@ -75,7 +76,15 @@ export default {
                     :key="message.id"
                     class="mb-2"
                 >
-                    <div><b>Usuario:</b> {{ message.user }}</div>
+                    <div>
+                        <b>Usuario:</b> 
+                        <router-link 
+                            :to="`/usuario/${message.userId}`" 
+                            class="ml-1 text-blue-600 underline"
+                        >
+                            {{ message.user }}
+                        </router-link>
+                    </div>
                     <div><b>Mensaje:</b> {{ message.message }}</div>
                     <div class="text-right">{{ formatDate(message.created_at) }}</div>
                 </div>

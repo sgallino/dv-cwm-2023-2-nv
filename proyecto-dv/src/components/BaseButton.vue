@@ -23,7 +23,7 @@ export default {
             <slot>Enviar</slot>
         </template>
         <template v-else>
-            <Loader />
+            <Loader size="small" />
         </template>
     </button>
 </template>

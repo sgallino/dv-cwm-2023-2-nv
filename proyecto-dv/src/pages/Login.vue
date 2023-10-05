@@ -28,7 +28,8 @@ export default {
             })
                 .then(user => {
                     // console.log('[Login.vue] User: ', user)
-                    this.$emit('login', {...user});
+                    // this.$emit('login', {...user});
+                    this.$router.push('/chat');
                 })
                 .finally(() => {
                     this.loginLoading = false;
@@ -48,6 +49,7 @@ export default {
         <div class="mb-3">
             <BaseLabel for="email">Email</BaseLabel>
             <BaseInput
+                :disabled="loginLoading"
                 type="email" 
                 id="email"
                 v-model="form.email"
@@ -56,12 +58,13 @@ export default {
         <div class="mb-3">
             <BaseLabel for="password">Contraseña</BaseLabel>
             <BaseInput
+                :disabled="loginLoading"
                 type="password" 
                 id="password"
                 v-model="form.password"
             />
         </div>
-        <BaseButton>Ingresar</BaseButton>
+        <BaseButton :loading="loginLoading">Ingresar</BaseButton>
         <!-- <button
             class="w-full p-1.5 rounded bg-blue-700 text-white"
             type="submit"
