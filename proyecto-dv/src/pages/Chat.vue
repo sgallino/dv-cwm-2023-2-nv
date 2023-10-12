@@ -86,7 +86,7 @@ export default {
                         </router-link>
                     </div>
                     <div><b>Mensaje:</b> {{ message.message }}</div>
-                    <div class="text-right">{{ formatDate(message.created_at) }}</div>
+                    <div class="text-right">{{ formatDate(message.created_at) || 'Enviando...' }}</div>
                 </div>
             </template>
             <template v-else>

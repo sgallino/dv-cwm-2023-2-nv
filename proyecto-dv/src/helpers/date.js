@@ -2,10 +2,15 @@
  * Transforma un objeto Date a una representación como string con el formato:
  * AAAA-MM-DD hh:mm:ss
  * 
- * @param {Date} date 
+ * Si date es null, se retorna null.
+ * 
+ * @param {Date|null} date 
+ * @returns {string|null}
  */
 export function dateToString(date)
 {
+    if(date == null) return null;
+
     // Tenemos dos maneras de lograr el objetivo:
     // 1. Parsear manualmente el objeto Date y armar el string.
     // 2. Usar la API de Intl.
