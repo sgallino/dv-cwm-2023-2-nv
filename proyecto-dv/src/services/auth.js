@@ -20,11 +20,12 @@ El proceso de agregar un observador se suele llamar en algunos casos "listen" o 
 */
 import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { auth } from './firebase.js';
-import { createUserProfile } from './user.js';
+import { createUserProfile, getUserProfileById } from './user.js';
 
 let userData = {
     id: null,
     email: null,
+    career: null,
 }
 let observers = [];
 
@@ -33,7 +34,7 @@ if(localStorage.getItem('user')) {
     userData = JSON.parse(localStorage.getItem('user'));
 }
 
-onAuthStateChanged(auth, user => {
+onAuthStateChanged(auth, async user => {
     if(user) {
         setUserData({
             id: user.uid,

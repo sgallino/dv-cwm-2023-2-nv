@@ -1,0 +1,89 @@
+// Las primeras tres líneas de código van a ser siempre las mismas.
+// La primera define que queremos usar la versión más nueva de las reglas.
+// La segunda define que las reglas son para el servicio de Firestore.
+// La tercera define el path básico de nuestra base de datos.
+
+// Todo nuestro código va a estar dentro del primer match.
+// La idea de las reglas de seguridad es indicar para qué ruta de un documento de la base 
+// de datos aplican qué condiciones para qué acciones.
+// Por defecto, TODAS las acciones se prohiben. Si no hay una regla que habilite la acción,
+// automáticamente se rechaza.
+// Los match son los bloques básicos de las reglas. Permiten definir para qué path vamos a
+// definir acciones y sus condiciones. La sintaxis es:
+//    match /<path> {
+//			allow <acciones>: if <condiciones>
+//    }
+// Cabe destacar que un match puede tener múltiples allow.
+// Dentro de las condiciones tenemos acceso a variables. Hay 2 que están predefinidas:
+// - request
+//   Contiene datos sobre la petición, incluyendo el estado de autenticación.
+// - resource
+//	 Contiene la información sobre el documento al que se está accediendo. Solo funciona
+//	 para acciones de lectura (read), edición (update) y eliminación (delete).
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    //match /{document=**} {
+    //  allow read, write: if request.time < timestamp.date(2023, 12, 16);
+    //}
+    
+    // Para poder leer los chats y escribir mensajes solo vamos a necesitar estar autenticados.
+    match /chats/{chat} {
+    	allow read, create: if request.auth != null;
+    }
+    
+    // Para los usuarios, vamos a requerir:
+    // - Para leer el perfil, hay que estar autenticado.
+    match /users/{user} {
+    	allow read: if request.auth != null;
+      
+      allow create: if
+      	request.auth != null &&
+        // Verificamos que el id del documento (que capturamos en la variable user
+      	// en el match) coincida con el id del usuario autenticado.
+        request.auth.uid == user;
+    }
+    
+    // Para los chats privados:
+    // - Para leerlos, necesitamos estar autenticados y ser parte de la conversación.
+    match /private-chats/{chat} {
+    	allow read: if 
+      	request.auth != null &&
+        // Para acceder al documento del chat privado, podemos usar resource.data,
+        // que nos da acceso al contenido del documento que estamos accediendo.
+        request.auth.uid in resource.data.users;
+      
+    	allow create: if 
+      	request.auth != null &&
+        request.auth.uid in request.resource.data.users;
+        
+      match /messages/{message} {
+      	allow read: if
+        	request.auth != null &&
+          // Acá no podemos usar resource para leer el contenido del chat privado,
+          // porque es un documento diferente.
+          // Para poder hacer la verificación, entonces, vamos a necesitar buscar
+          // el documento del chat privado específicamente, con ayuda de la función
+          // get().
+          // get() recibe como argumento el path al documento que quiero leer. Tiene
+          // que ser el path completo, incluyendo el /databases/...
+          // Para los segmentos que usen una variable, los podemos indicar con $(variable)
+          // Las variables salen de lo que pusimos entre {} en los match.
+        	request.auth.uid in get(/databases/$(database)/documents/private-chats/$(chat)).data.users;
+          
+        // Para mandar mensajes, en principio necesitamos las mismas condiciones que el leer.
+        // Además, vamos a requerir que el mensaje sea del usuario que está autenticado.
+        // request.resource nos permite acceder al contenido que se está pidiendo grabar.
+      	allow create: if
+        	request.auth != null &&
+        	request.auth.uid in get(/databases/$(database)/documents/private-chats/$(chat)).data.users &&
+          request.auth.uid == request.resource.data.senderId;
+      }
+    }
+    
+    //match /private-chats/{chat}/messages/{message} {
+    //	
+    //}
+  }
+}

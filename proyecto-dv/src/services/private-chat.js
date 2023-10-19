@@ -86,14 +86,14 @@ export async function sendPrivateChatMessage({senderId, receiverId, message}) {
  */
 export async function subscribeToPrivateChat({senderId, receiverId}, callback) {
     const privateChatDoc = await getPrivateChatDoc({senderId, receiverId});
-
+    
     const messagesRef = collection(db, `private-chats/${privateChatDoc.id}/messages`);
 
     const q = query(
         messagesRef,
         orderBy('created_at')
     );
-
+    
     return onSnapshot(q, snapshot => {
         const messages = snapshot.docs.map(doc => {
             return {
@@ -155,11 +155,11 @@ async function getPrivateChatDoc({senderId, receiverId}) {
 }
 
 function addToCache({senderId, receiverId}, value) {
-    privateChatRefCache[getKeyForCache()] = value;
+    privateChatRefCache[getKeyForCache({senderId, receiverId})] = value;
 }
 
 function getFromCache({senderId, receiverId}) {
-    return privateChatRefCache[getKeyForCache()] || null;
+    return privateChatRefCache[getKeyForCache({senderId, receiverId})] || null;
 }
 
 function getKeyForCache({senderId, receiverId}) {
