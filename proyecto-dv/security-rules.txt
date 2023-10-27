@@ -30,7 +30,11 @@ service cloud.firestore {
     
     // Para poder leer los chats y escribir mensajes solo vamos a necesitar estar autenticados.
     match /chats/{chat} {
-    	allow read, create: if request.auth != null;
+    	allow read: if request.auth != null;
+      
+    	allow create: if 
+      	request.auth != null &&
+        request.auth.uid == request.resource.data.userId;
     }
     
     // Para los usuarios, vamos a requerir:

@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
 import BaseButton from '../components/BaseButton.vue';
 import BaseLabel from '../components/BaseLabel.vue';
 import BaseInput from '../components/BaseInput.vue';
@@ -7,7 +7,7 @@ import { login } from '../services/auth.js';
 export default {
     name: 'Login',
     components: { BaseButton, BaseLabel, BaseInput },
-    emits: ['login'],
+    // emits: ['login'],
     data() {
         return {
             loginLoading: false,
@@ -36,6 +36,41 @@ export default {
                 });
         }
     }
+}
+</script> -->
+<script setup>
+import BaseButton from '../components/BaseButton.vue';
+import BaseLabel from '../components/BaseLabel.vue';
+import BaseInput from '../components/BaseInput.vue';
+import { login } from '../services/auth.js';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+// Obtenemos el objeto de router, con la función de composición useRouter de vue Router.
+const router = useRouter();
+
+// Definimos los datos del state del componente. Para definir una "referencia reactiva" o "variable
+// reactiva" usamos la función de Vue ref().
+const loginLoading = ref(false);
+const form = ref({
+    email: '',
+    password: '',
+});
+
+const doLogin = async () => {
+    try {
+        // Noten que para acceder a los valores de cada referencia reactiva en el <script> tenemos que usar
+        // .value
+        loginLoading.value = true;
+        await login({
+            ...form.value,
+        });
+        
+        router.push('/chat');
+    } catch (error) {
+        // TODO: Manejar el mensaje de error :)
+    }
+    loginLoading.value = false;
 }
 </script>
 

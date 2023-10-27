@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
 import Loader from '../components/Loader.vue';
 import { getUserProfileById } from '../services/user';
 
@@ -20,6 +20,26 @@ export default {
         this.userLoading = false;
     },
 }
+</script> -->
+<script setup>
+import { onMounted, ref } from 'vue';
+import Loader from '../components/Loader.vue';
+import { getUserProfileById } from '../services/user';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+
+const userLoading = ref(true);
+const user = ref({
+    id: null,
+    email: null,
+});
+
+onMounted(async () => {
+    userLoading.value = true;
+    user.value = await getUserProfileById(route.params.id);
+    userLoading.value = false;
+});
 </script>
 
 <template>

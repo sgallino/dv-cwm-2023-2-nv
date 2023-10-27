@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
 import Loader from './Loader.vue';
 
 export default {
@@ -11,6 +11,17 @@ export default {
         }
     },
 }
+</script> -->
+<script setup>
+// Con la etiqueta <script setup> solo necesitamos importar los componentes. No hace falta "registrarlos".
+import Loader from './Loader.vue';
+
+defineProps({
+    loading: {
+        type: Boolean,
+        default: false,
+    }
+});
 </script>
 
 <template>

@@ -1,9 +1,24 @@
-<script>
+<!-- <script>
 export default {
     name: 'BaseInput',
     props: ['modelValue'],
     emits: ['update:modelValue'],
 }
+</script> -->
+<script setup>
+// Usamos la función defineProps (no hace falta importarla) para definir las propiedades del componente.
+// Solo hace falta capturar el retorno de la función si queremos usar las propiedades dentro de la etiqueta
+// <script>.
+// const props = defineProps(['modelValue']);
+defineProps({
+    modelValue: {
+        type: String,
+        required: true,
+    }
+});
+
+// Usamos la función defineEmits (no hace falta importarla) para definir qué eventos se emiten.
+defineEmits(['update:modelValue']);
 </script>
 
 <template>

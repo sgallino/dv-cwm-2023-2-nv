@@ -1,9 +1,19 @@
-<script>
+<!-- <script>
 export default {
     name: 'BaseTextarea',
     props: ['modelValue'],
     emits: ['update:modelValue'],
 }
+</script> -->
+<script setup>
+defineProps({
+    modelValue: {
+        type: String,
+        required: true,
+    }
+});
+
+defineEmits(['update:modelValue']);
 </script>
 
 <template>

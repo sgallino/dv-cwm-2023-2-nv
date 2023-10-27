@@ -1,5 +1,5 @@
-<script>
-const sizes = ['small', 'normal'];
+<!-- <script>
+import { BUTTON_SIZES } from './../constants/constants';
 
 export default {
     name: 'Loader',
@@ -8,7 +8,7 @@ export default {
             type: String,
             default: 'normal',
             validator: (value) => {
-                return sizes.includes(value);
+                return BUTTON_SIZES.includes(value);
             }
         },
     },
@@ -27,12 +27,32 @@ export default {
 
             return {
                 'loader-mini': this.size === 'small',
-                'loader': this.size === 'normal' || !sizes.includes(this.size),
+                'loader': this.size === 'normal' || !BUTTON_SIZES.includes(this.size),
             }
         }
     }
 }
-</script>
+</script> -->
+<script setup>
+import { computed } from 'vue';
+import { BUTTON_SIZES, BUTTON_SIZE_NORMAL, BUTTON_SIZE_SMALL } from './../constants/constants';
+
+// Acá sí capturamos el retorno de la función defineProps, para poder usar las propiedades en el script.
+const props = defineProps({
+    size: {
+        type: String,
+        default: BUTTON_SIZE_NORMAL,
+        validator: value => BUTTON_SIZES.includes(value),
+    }
+});
+
+const loaderClass = computed(() => {
+    return {
+        'loader-mini': props.size === BUTTON_SIZE_SMALL,
+        'loader': props.size === BUTTON_SIZE_NORMAL || !BUTTON_SIZES.includes(props.size),
+    }
+});
+</script>  
 
 <template>
     <div :class="loaderClass">

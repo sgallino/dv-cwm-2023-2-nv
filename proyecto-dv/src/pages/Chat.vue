@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
 import {chatSubscribeToMessages, chatSaveMessage} from "../services/chat.js";
 import { dateToString } from '../helpers/date.js';
 import BaseButton from "../components/BaseButton.vue";
@@ -61,6 +61,69 @@ export default {
         this.unsubscribeAuth();
     }
 };
+</script> -->
+<script setup>
+import { chatSubscribeToMessages, chatSaveMessage } from "../services/chat.js";
+import { dateToString } from '../helpers/date.js';
+import BaseButton from "../components/BaseButton.vue";
+import BaseLabel from "../components/BaseLabel.vue";
+import BaseTextarea from "../components/BaseTextarea.vue";
+import Loader from "../components/Loader.vue";
+import { onMounted, onUnmounted, ref } from "vue";
+import { useAuth } from './../composition/useAuth';
+
+const { messages, messagesLoading } = useChatMessages();
+const { user, newMessage, newMessageSaving, sendMessage } = useChatForm();
+
+function useChatMessages() {
+    const messages = ref([]);
+    const messagesLoading = ref(true);
+
+    let unsubscribeChat;
+
+    onMounted(() => {
+        messagesLoading.value = true;
+        unsubscribeChat = chatSubscribeToMessages(newMessages => {
+            messages.value = newMessages;
+            messagesLoading.value = false;
+        });
+    });
+    onUnmounted(() => unsubscribeChat());
+
+    return {
+        messages,
+        messagesLoading,
+    }
+}
+
+function useChatForm() {
+    const { user } = useAuth();
+    const newMessage = ref({
+        message: '',
+    });
+    const newMessageSaving = ref(false);
+
+    async function sendMessage() {
+        if(newMessageSaving.value) return;
+
+        newMessageSaving.value = true;
+        await chatSaveMessage({
+            userId: user.value.id,
+            user: user.value.email,
+            message: newMessage.value.message,
+            // ...newMessage.value // Podríamos haberlo escrito así, también.
+        });
+        newMessage.value.message = '';
+        newMessageSaving.value = false;
+    }
+
+    return {
+        user,
+        newMessage,
+        newMessageSaving,
+        sendMessage,
+    }
+}
 </script>
 
 <template>
@@ -86,7 +149,7 @@ export default {
                         </router-link>
                     </div>
                     <div><b>Mensaje:</b> {{ message.message }}</div>
-                    <div class="text-right">{{ formatDate(message.created_at) || 'Enviando...' }}</div>
+                    <div class="text-right">{{ dateToString(message.created_at) || 'Enviando...' }}</div>
                 </div>
             </template>
             <template v-else>

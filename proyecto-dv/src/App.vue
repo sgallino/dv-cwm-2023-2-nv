@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
 import Chat from './pages/Chat.vue';
 import { subscribeToAuth, logout } from './services/auth.js';
 
@@ -25,6 +25,27 @@ export default {
         });
     }
 };
+</script> -->
+<script setup>
+import { useRouter } from 'vue-router';
+import { logout } from './services/auth.js';
+import { useAuth } from './composition/useAuth';
+
+const { handleLogout } = useLogout();
+const { user } = useAuth();
+
+function useLogout() {
+    const router = useRouter();
+
+    const handleLogout = () => {
+        logout();
+        router.push('/iniciar-sesion');
+    }
+
+    return {
+        handleLogout,
+    }
+}
 </script>
 
 <template>
