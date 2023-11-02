@@ -23,7 +23,7 @@ export default {
         subscribeToAuth(user => {
             this.user = {...user};
         });
-    }
+    },
 };
 </script> -->
 <script setup>
@@ -79,7 +79,7 @@ function useLogout() {
                     </li>
                     <li>
                         <form 
-                            action=""
+                            action="#"
                             @submit.prevent="handleLogout"
                         >
                             <button type="submit"><b>{{ user.email }}</b> (Cerrar Sesión)</button>

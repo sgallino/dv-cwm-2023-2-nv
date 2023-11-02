@@ -72,8 +72,9 @@ import Loader from "../components/Loader.vue";
 import { onMounted, onUnmounted, ref } from "vue";
 import { useAuth } from './../composition/useAuth';
 
+const { user } = useAuth();
 const { messages, messagesLoading } = useChatMessages();
-const { user, newMessage, newMessageSaving, sendMessage } = useChatForm();
+const { newMessage, newMessageSaving, sendMessage } = useChatForm(user);
 
 function useChatMessages() {
     const messages = ref([]);
@@ -96,8 +97,7 @@ function useChatMessages() {
     }
 }
 
-function useChatForm() {
-    const { user } = useAuth();
+function useChatForm(user) {
     const newMessage = ref({
         message: '',
     });
@@ -118,7 +118,6 @@ function useChatForm() {
     }
 
     return {
-        user,
         newMessage,
         newMessageSaving,
         sendMessage,

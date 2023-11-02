@@ -18,13 +18,14 @@ El sujeto luego es el encargado de llevar una lista de los observadores, y de no
 algún cambio.
 El proceso de agregar un observador se suele llamar en algunos casos "listen" o "subscribe".
 */
-import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut, updateProfile } from 'firebase/auth';
 import { auth } from './firebase.js';
-import { createUserProfile, getUserProfileById } from './user.js';
+import { createUserProfile, getUserProfileById, updateUserProfile } from './user.js';
 
 let userData = {
     id: null,
     email: null,
+    displayName: null,
     career: null,
 }
 let observers = [];
@@ -39,8 +40,14 @@ onAuthStateChanged(auth, async user => {
         setUserData({
             id: user.uid,
             email: user.email,
+            displayName: user.displayName,
         });
-        localStorage.setItem('user', JSON.stringify(userData));
+
+        // Luego de setear los datos básicos, vamos a buscar el resto de la información.
+        const fullData = await getUserProfileById(user.uid);
+        setUserData({
+            career: fullData.career,
+        });
     } else {
         clearUserData();
         localStorage.removeItem('user');
@@ -124,6 +131,32 @@ export function login({email, password}) {
 
 /**
  * 
+ * @param {{displayName: string|null}} data
+ * @returns {Promise}
+ */
+export async function editProfile({displayName, career}) {
+    try {
+        // Actualizamos los datos en Firebase Authentication.
+        const promiseAuth = updateProfile(auth.currentUser, {displayName});
+    
+        // Actualizamos los datos en Firestore.
+        const promiseProfile = updateUserProfile(userData.id, {displayName, career});
+    
+        await Promise.all([promiseAuth, promiseProfile]);
+
+        // Actualizamos los datos de userData
+        setUserData({
+            displayName,
+            career,
+        });
+    } catch (error) {
+        // TODO :D
+        throw error;
+    }
+}
+
+/**
+ * 
  * @returns {Promise}
  */
 export function logout() {
@@ -142,7 +175,7 @@ export function logout() {
  * Agrega un observer (callback) para ser notificado de los cambios en el estado de autenticación.
  * El observer debe ser una función que reciba como argumento un objeto y no retorne nada.
  * 
- * @param {({id: null|string, email: null|string}) => void} observer 
+ * @param {({id: null|string, email: null|string, displayName: null|string, career: null|string}) => void} observer 
  * @returns {() => void} Función para cancelar la suscripción.
  */
 export function subscribeToAuth(observer) {
@@ -178,13 +211,14 @@ function notify(observer) {
 
 /**
  * 
- * @param {{id: null|string, email: null|string}} newData 
+ * @param {{id: null|string, email: null|string, displayName: null|string, career: null|string}} newData 
  */
 function setUserData(newData) {
     userData = {
         ...userData,
         ...newData,
     }
+    localStorage.setItem('user', JSON.stringify(userData));
     notifyAll();
 }
 
@@ -192,6 +226,8 @@ function clearUserData() {
     setUserData({
         id: null,
         email: null,
+        displayName: null,
+        career: null,
     });
 }
 

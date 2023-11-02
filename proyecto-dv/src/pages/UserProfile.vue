@@ -22,24 +22,12 @@ export default {
 }
 </script> -->
 <script setup>
-import { onMounted, ref } from 'vue';
 import Loader from '../components/Loader.vue';
-import { getUserProfileById } from '../services/user';
 import { useRoute } from 'vue-router';
+import { useUserProfile } from '../composition/useUserProfile';
 
 const route = useRoute();
-
-const userLoading = ref(true);
-const user = ref({
-    id: null,
-    email: null,
-});
-
-onMounted(async () => {
-    userLoading.value = true;
-    user.value = await getUserProfileById(route.params.id);
-    userLoading.value = false;
-});
+const { user, userLoading } = useUserProfile(route.params.id);
 </script>
 
 <template>

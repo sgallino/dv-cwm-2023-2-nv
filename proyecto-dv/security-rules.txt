@@ -42,7 +42,7 @@ service cloud.firestore {
     match /users/{user} {
     	allow read: if request.auth != null;
       
-      allow create: if
+      allow create, update: if
       	request.auth != null &&
         // Verificamos que el id del documento (que capturamos en la variable user
       	// en el match) coincida con el id del usuario autenticado.
