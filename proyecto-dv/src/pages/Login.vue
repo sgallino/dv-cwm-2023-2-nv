@@ -66,7 +66,7 @@ const doLogin = async () => {
             ...form.value,
         });
         
-        router.push('/chat');
+        router.push('/perfil');
     } catch (error) {
         // TODO: Manejar el mensaje de error :)
     }

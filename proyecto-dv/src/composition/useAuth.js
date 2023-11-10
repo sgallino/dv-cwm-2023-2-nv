@@ -7,6 +7,7 @@ export function useAuth() {
         email: null,
         displayName: null,
         career: null,
+        fullProfileLoaded: false,
     });
     let unsubscribeAuth;
 

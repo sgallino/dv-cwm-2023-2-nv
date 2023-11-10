@@ -12,9 +12,11 @@ export async function getUserProfileById(id) {
 
     return {
         id: docSnapshot.id,
-        email: docSnapshot.data().email,
-        displayName: docSnapshot.data().displayName,
-        career: docSnapshot.data().career,
+        ...docSnapshot.data()
+        // email: docSnapshot.data().email,
+        // displayName: docSnapshot.data().displayName,
+        // career: docSnapshot.data().career,
+        // photoURL: docSnapshot.data().career,
     }
 }
 
@@ -32,7 +34,7 @@ export async function createUserProfile(id, data) {
 /**
  * 
  * @param {string} id 
- * @param {{displayName: string|null}} data 
+ * @param {{displayName: string|null, photoURL: string|null, career: string|null}} data 
  * @returns {Promise}
  */
 export async function updateUserProfile(id, data) {

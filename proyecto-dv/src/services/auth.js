@@ -21,12 +21,15 @@ El proceso de agregar un observador se suele llamar en algunos casos "listen" o 
 import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut, updateProfile } from 'firebase/auth';
 import { auth } from './firebase.js';
 import { createUserProfile, getUserProfileById, updateUserProfile } from './user.js';
+import { getFileURL, uploadFile } from './file-storage.js';
 
 let userData = {
     id: null,
     email: null,
     displayName: null,
+    photoURL: null,
     career: null,
+    fullProfileLoaded: false,
 }
 let observers = [];
 
@@ -41,12 +44,14 @@ onAuthStateChanged(auth, async user => {
             id: user.uid,
             email: user.email,
             displayName: user.displayName,
+            photoURL: user.photoURL,
         });
 
         // Luego de setear los datos básicos, vamos a buscar el resto de la información.
         const fullData = await getUserProfileById(user.uid);
         setUserData({
             career: fullData.career,
+            fullProfileLoaded: true,
         });
     } else {
         clearUserData();
@@ -131,28 +136,49 @@ export function login({email, password}) {
 
 /**
  * 
- * @param {{displayName: string|null}} data
+ * @param {{displayName: string|null, photoURL: string|null, career: string|null}} data
  * @returns {Promise}
  */
-export async function editProfile({displayName, career}) {
+export async function editProfile({displayName, photoURL, career}) {
     try {
+        // Preparamos los datos para Authentication.
+        const data = {};
+        if(displayName !== undefined) data.displayName = displayName;
+        if(photoURL !== undefined) data.photoURL = photoURL;
+
         // Actualizamos los datos en Firebase Authentication.
-        const promiseAuth = updateProfile(auth.currentUser, {displayName});
+        const promiseAuth = updateProfile(auth.currentUser, data);
+
+        // Agregamos los datos para Firestore.
+        if(career !== undefined) data.career = career;
     
         // Actualizamos los datos en Firestore.
-        const promiseProfile = updateUserProfile(userData.id, {displayName, career});
+        const promiseProfile = updateUserProfile(userData.id, data);
     
         await Promise.all([promiseAuth, promiseProfile]);
 
         // Actualizamos los datos de userData
-        setUserData({
-            displayName,
-            career,
-        });
+        setUserData(data);
     } catch (error) {
         // TODO :D
         throw error;
     }
+}
+
+/**
+ * 
+ * @param {File} file 
+ * @return {Promise}
+ */
+export async function editProfileAvatar(file) {
+    const path = `users/${userData.id}/avatar`;
+    await uploadFile(path, file);
+    
+    const photoURL = await getFileURL(path);
+
+    return editProfile({
+        photoURL,
+    });
 }
 
 /**
@@ -227,8 +253,11 @@ function clearUserData() {
         id: null,
         email: null,
         displayName: null,
+        photoURL: null,
         career: null,
+        fullProfileLoaded: false,
     });
+    localStorage.removeItem('user');
 }
 
 export function getUserData() {

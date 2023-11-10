@@ -6,6 +6,9 @@ export function useUserProfile(id) {
     const user = ref({
         id: null,
         email: null,
+        displayName: null,
+        career: null,
+        photoURL: null,
     });
 
     onMounted(async () => {

@@ -25,6 +25,7 @@ export default {
 import Loader from '../components/Loader.vue';
 import { useRoute } from 'vue-router';
 import { useUserProfile } from '../composition/useUserProfile';
+import UserProfileData from '../components/UserProfileData.vue';
 
 const route = useRoute();
 const { user, userLoading } = useUserProfile(route.params.id);
@@ -35,6 +36,8 @@ const { user, userLoading } = useUserProfile(route.params.id);
     <template   v-else>
         <h1 class="mb-4 font-bold text-3xl">Perfil de {{ user.email }}</h1>
 
+        <UserProfileData :user="user" />
+        
         <hr class="mb-4" />
 
         <h2 class="mb-2 text-xl">Conversación privada</h2>
