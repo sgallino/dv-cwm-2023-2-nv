@@ -127,10 +127,11 @@ export function login({email, password}) {
             return {...userData};
         })
         .catch(error => {
-            return {
-                code: error.code,
-                message: error.message,
-            }
+            throw error;
+            // return {
+            //     code: error.code,
+            //     message: error.message,
+            // }
         });
 }
 

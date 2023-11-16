@@ -1,0 +1,1 @@
+export const notificationSymbol = Symbol('notification'); // Importante: NO lleva "new", no es que me lo olvidé.

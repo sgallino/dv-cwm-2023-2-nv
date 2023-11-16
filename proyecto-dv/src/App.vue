@@ -27,9 +27,28 @@ export default {
 };
 </script> -->
 <script setup>
+import { provide, readonly, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { logout } from './services/auth.js';
 import { useAuth } from './composition/useAuth';
+import { notificationSymbol } from './symbols/symbols';
+
+const notification = ref({
+    message: null,
+    type: 'success',
+});
+
+function setNotification(data) {
+    notification.value = data;
+}
+
+// Definimos el contenido que queremos proveer a cualquiera de los descendientes de este componente.
+provide(notificationSymbol, {
+    notification: readonly(notification),
+    setNotification,
+    setSuccessMessage: message => setNotification({message, type: 'success'}),
+    setErrorMessage: message => setNotification({message, type: 'error'}),
+});
 
 const { handleLogout } = useLogout();
 const { user } = useAuth();
@@ -95,7 +114,21 @@ function useLogout() {
     Mientras tanto, vamos a renderizar la "vista" del Chat.
     -->
     <div class="container h-full m-auto p-4">
-        <!-- <Chat /> -->
+        <div
+            v-if="notification.message != null"
+            class="p-4 border rounded mb-4"
+            :class="{
+                'border-green-700': notification.type == 'success',
+                'text-green-700': notification.type == 'success',
+                'bg-green-100': notification.type == 'success',
+                'border-red-700': notification.type == 'error',
+                'text-red-700': notification.type == 'error',
+                'bg-red-100': notification.type == 'error',
+            }"
+        >
+            {{ notification.message }}
+        </div>
+        
         <router-view></router-view>
     </div>
 

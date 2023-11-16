@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { inject, ref } from 'vue';
 import BaseButton from '../components/BaseButton.vue';
 import { useAuth } from '../composition/useAuth';
 import BaseLabel from '../components/BaseLabel.vue';
@@ -7,6 +7,9 @@ import BaseInput from '../components/BaseInput.vue';
 import { editProfile, editProfileAvatar } from '../services/auth';
 import Loader from '../components/Loader.vue';
 import UserProfileData from '../components/UserProfileData.vue';
+import { notificationSymbol } from '../symbols/symbols';
+
+const { setNotification } = inject(notificationSymbol);
 
 const { user } = useAuth();
 const {
@@ -51,8 +54,16 @@ function useProfileEdit(user) {
                 displayName: editData.value.displayName,
                 career: editData.value.career,
             });
+
+            setNotification({
+                message: 'Tu información de perfil se actualizó correctamente.',
+                type: 'success',
+            });
         } catch (error) {
-            // TODO: Notificación de error.
+            setNotification({
+                message: error,
+                type: 'error',
+            });
         }
         editingLoading.value = false;
     }
