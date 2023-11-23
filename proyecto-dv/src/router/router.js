@@ -1,6 +1,8 @@
 // Vamos a definir los detalles de nuestro Router de Vue.
 import Home from './../pages/Home.vue';
 import About from './../pages/About.vue';
+import Blog from './../pages/Blog.vue';
+import BlogPublish from './../pages/BlogPublish.vue';
 import Chat from './../pages/Chat.vue';
 import Register from './../pages/Register.vue';
 import Login from './../pages/Login.vue';
@@ -16,6 +18,8 @@ const routes = [
     { path: '/quienes-somos',       component: About },
     { path: '/registro',            component: Register },
     { path: '/iniciar-sesion',      component: Login },
+    { path: '/blog',                component: Blog,            meta: { requiresAuth: true }, },
+    { path: '/blog/publicar',       component: BlogPublish,     meta: { requiresAuth: true }, },
     { path: '/chat',                component: Chat,            meta: { requiresAuth: true }, },
     { path: '/perfil',              component: MyProfile,       meta: { requiresAuth: true }, },
     { path: '/usuario/:id',         component: UserProfile,     meta: { requiresAuth: true }, },
